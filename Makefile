@@ -1,4 +1,6 @@
-.PHONY: format lint format-check lint-check
+.PHONY: all format lint format-check lint-check test
+
+all: test format-check lint-check
 
 format:
 	uv run ruff format .
@@ -11,3 +13,6 @@ format-check:
 
 lint-check:
 	uv run ruff check .
+
+test:
+	uv run pytest

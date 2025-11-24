@@ -4,14 +4,15 @@ import numpy as np
 
 def split_dataframe_by_column(df, column_name):
     """
-    Splits a DataFrame into a list of DataFrames, each with constant values in the specified column.
+    Splits a DataFrame into a dictionary of DataFrames, each with constant values in the specified column.
 
     Parameters:
     df (pd.DataFrame): Input DataFrame to split
     column_name (str): Name of the column to use for splitting
 
     Returns:
-    list[pd.DataFrame]: List of DataFrames, each containing rows with the same value in column_name
+    dict: Dictionary where keys are unique values from column_name and values are DataFrames
+          For NaN values, the key will be the string 'NaN'
     """
     if column_name not in df.columns:
         raise ValueError(f"Column '{column_name}' not found in DataFrame")
@@ -19,17 +20,19 @@ def split_dataframe_by_column(df, column_name):
     # Get unique values in the specified column
     unique_values = df[column_name].unique()
 
-    # Create list of dataframes, one for each unique value
-    dataframes = []
+    # Create dictionary of dataframes, one for each unique value
+    dataframes = {}
     for value in unique_values:
         if pd.isna(value):
             # Handle NaN values separately since NaN != NaN
             subset_df = df[df[column_name].isna()].copy()
+            key = "NaN"
         else:
             subset_df = df[df[column_name] == value].copy()
+            key = value
 
         if len(subset_df) > 0:  # Only add non-empty dataframes
-            dataframes.append(subset_df)
+            dataframes[key] = subset_df
 
     return dataframes
 

@@ -132,7 +132,7 @@ class TestSplitDataframeByColumn:
 
         # Check each dataframe has constant category value
         categories_found = set()
-        for df_subset in result:
+        for key, df_subset in result.items():
             unique_categories = df_subset["category"].unique()
             assert len(unique_categories) == 1
             categories_found.add(unique_categories[0])
@@ -145,7 +145,7 @@ class TestSplitDataframeByColumn:
         result = split_dataframe_by_column(self.df, "category")
 
         # Concatenate all split dataframes
-        combined = pd.concat(result, ignore_index=True)
+        combined = pd.concat(result.values(), ignore_index=True)
 
         # Should have same number of rows
         assert len(combined) == len(self.df)
@@ -154,9 +154,9 @@ class TestSplitDataframeByColumn:
         assert set(combined.columns) == set(self.df.columns)
 
         # Check specific subsets
-        df_a = next(df for df in result if df["category"].iloc[0] == "A")
-        df_b = next(df for df in result if df["category"].iloc[0] == "B")
-        df_c = next(df for df in result if df["category"].iloc[0] == "C")
+        df_a = result["A"]
+        df_b = result["B"]
+        df_c = result["C"]
 
         assert len(df_a) == 3  # A appears 3 times
         assert len(df_b) == 2  # B appears 2 times
@@ -174,10 +174,12 @@ class TestSplitDataframeByColumn:
         result = split_dataframe_by_column(numeric_df, "group")
 
         assert len(result) == 3  # Groups 1, 2, 3
+        assert 1 in result
+        assert 2 in result
+        assert 3 in result
 
         # Verify each group
-        for df_subset in result:
-            group_val = df_subset["group"].iloc[0]
+        for group_val, df_subset in result.items():
             assert all(df_subset["group"] == group_val)
 
     def test_single_unique_value(self):
@@ -187,8 +189,9 @@ class TestSplitDataframeByColumn:
         result = split_dataframe_by_column(single_df, "constant")
 
         assert len(result) == 1
-        assert len(result[0]) == 3
-        assert all(result[0]["constant"] == "same")
+        assert "same" in result
+        assert len(result["same"]) == 3
+        assert all(result["same"]["constant"] == "same")
 
     def test_empty_dataframe(self):
         """Test with empty DataFrame."""
@@ -207,7 +210,7 @@ class TestSplitDataframeByColumn:
         result = split_dataframe_by_column(self.df, "category")
 
         # Modify one of the returned dataframes
-        df_subset = result[0]
+        df_subset = result["A"]
         original_value = df_subset["value"].iloc[0]
         df_subset.loc[df_subset.index[0], "value"] = 999
 
@@ -223,26 +226,13 @@ class TestSplitDataframeByColumn:
 
         # Should have 3 groups: 'A', 'B', and NaN
         assert len(result) == 3
+        assert "A" in result
+        assert "B" in result
+        assert "NaN" in result
 
-        # Find the NaN group and other groups
-        nan_group = None
-        a_group = None
-        b_group = None
-
-        for df_subset in result:
-            if len(df_subset) > 0:  # Ensure dataframe is not empty
-                first_value = df_subset["category"].iloc[0]
-                if pd.isna(first_value):
-                    nan_group = df_subset
-                elif first_value == "A":
-                    a_group = df_subset
-                elif first_value == "B":
-                    b_group = df_subset
-
-        # Verify all groups were found
-        assert nan_group is not None
-        assert a_group is not None
-        assert b_group is not None
+        nan_group = result["NaN"]
+        a_group = result["A"]
+        b_group = result["B"]
 
         # Check group sizes and content
         assert len(nan_group) == 2  # Two NaN values
