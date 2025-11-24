@@ -37,6 +37,4 @@ def categorical_dataframe():
 @pytest.fixture
 def dataframe_with_nan():
     """DataFrame containing NaN values for testing edge cases."""
-    return pd.DataFrame(
-        {"category": ["A", np.nan, "A", "B", np.nan], "value": [1, 2, 3, 4, 5]}
-    )
+    return pd.DataFrame({"category": ["A", np.nan, "A", "B", np.nan], "value": [1, 2, 3, 4, 5]})

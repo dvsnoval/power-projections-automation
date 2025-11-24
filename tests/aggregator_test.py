@@ -58,9 +58,7 @@ class TestInterpolateDataframe:
 
     def test_unsorted_data(self):
         """Test with unsorted executive metric data."""
-        unsorted_df = pd.DataFrame(
-            {"x": [3.0, 1.0, 5.0, 2.0, 4.0], "y": [30.0, 10.0, 50.0, 20.0, 40.0]}
-        )
+        unsorted_df = pd.DataFrame({"x": [3.0, 1.0, 5.0, 2.0, 4.0], "y": [30.0, 10.0, 50.0, 20.0, 40.0]})
         result = interpolate_dataframe(unsorted_df, "x", 1.0)
 
         expected_x = [1.0, 2.0, 3.0, 4.0, 5.0]
@@ -71,9 +69,7 @@ class TestInterpolateDataframe:
 
     def test_non_numeric_columns_ignored(self):
         """Test that non-numeric columns are ignored."""
-        mixed_df = pd.DataFrame(
-            {"x": [1.0, 2.0, 3.0], "y": [10.0, 20.0, 30.0], "label": ["A", "B", "C"]}
-        )
+        mixed_df = pd.DataFrame({"x": [1.0, 2.0, 3.0], "y": [10.0, 20.0, 30.0], "label": ["A", "B", "C"]})
         result = interpolate_dataframe(mixed_df, "x", 0.5)
 
         # Should only have numeric columns
@@ -173,9 +169,7 @@ class TestSplitDataframeByColumn:
 
     def test_split_by_numeric_column(self):
         """Test splitting by numeric column."""
-        numeric_df = pd.DataFrame(
-            {"group": [1, 2, 1, 3, 2, 1], "data": ["a", "b", "c", "d", "e", "f"]}
-        )
+        numeric_df = pd.DataFrame({"group": [1, 2, 1, 3, 2, 1], "data": ["a", "b", "c", "d", "e", "f"]})
 
         result = split_dataframe_by_column(numeric_df, "group")
 
@@ -188,9 +182,7 @@ class TestSplitDataframeByColumn:
 
     def test_single_unique_value(self):
         """Test with column having only one unique value."""
-        single_df = pd.DataFrame(
-            {"constant": ["same", "same", "same"], "varying": [1, 2, 3]}
-        )
+        single_df = pd.DataFrame({"constant": ["same", "same", "same"], "varying": [1, 2, 3]})
 
         result = split_dataframe_by_column(single_df, "constant")
 
@@ -207,9 +199,7 @@ class TestSplitDataframeByColumn:
 
     def test_invalid_column_name(self):
         """Test with non-existent column name."""
-        with pytest.raises(
-            ValueError, match="Column 'nonexistent' not found in DataFrame"
-        ):
+        with pytest.raises(ValueError, match="Column 'nonexistent' not found in DataFrame"):
             split_dataframe_by_column(self.df, "nonexistent")
 
     def test_dataframe_independence(self):
@@ -227,9 +217,7 @@ class TestSplitDataframeByColumn:
 
     def test_with_nan_values(self):
         """Test splitting when column contains NaN values."""
-        nan_df = pd.DataFrame(
-            {"category": ["A", np.nan, "A", "B", np.nan], "value": [1, 2, 3, 4, 5]}
-        )
+        nan_df = pd.DataFrame({"category": ["A", np.nan, "A", "B", np.nan], "value": [1, 2, 3, 4, 5]})
 
         result = split_dataframe_by_column(nan_df, "category")
 

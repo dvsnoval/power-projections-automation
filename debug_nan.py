@@ -9,9 +9,7 @@ import numpy as np
 from code.aggregator import split_dataframe_by_column
 
 # Test NaN handling
-nan_df = pd.DataFrame(
-    {"category": ["A", np.nan, "A", "B", np.nan], "value": [1, 2, 3, 4, 5]}
-)
+nan_df = pd.DataFrame({"category": ["A", np.nan, "A", "B", np.nan], "value": [1, 2, 3, 4, 5]})
 
 print("Original DataFrame:")
 print(nan_df)
