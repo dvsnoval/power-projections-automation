@@ -1,13 +1,13 @@
 .PHONY: format lint format-check lint-check
 
 format:
-	ruff format .
+	uv run ruff format .
 
 lint:
-	ruff check --fix .
+	uv run ruff check --fix .
 
 format-check:
-	ruff format --check .
+	uv run ruff format --check .
 
 lint-check:
-	ruff check .
+	uv run ruff check .
