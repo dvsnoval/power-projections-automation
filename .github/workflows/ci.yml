@@ -27,8 +27,5 @@ jobs:
         uv python install 3.8
         uv sync --extra dev
 
-    - name: Lint check
-      run: make lint-check
-
-    - name: Format check
-      run: make format-check
+    - name: Run all checks
+      run: make all
