@@ -6,7 +6,7 @@ sys.path.insert(0, ".")
 
 import pandas as pd
 import numpy as np
-from code.aggregator import split_dataframe_by_column
+from utils.aggregator import split_dataframe_by_column
 
 # Test NaN handling
 nan_df = pd.DataFrame({"category": ["A", np.nan, "A", "B", np.nan], "value": [1, 2, 3, 4, 5]})

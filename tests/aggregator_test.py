@@ -5,10 +5,10 @@ import pytest
 import sys
 import os
 
-# Add the parent directory to the path so we can import from code
+# Add the parent directory to the path so we can import from utils
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from code.aggregator import interpolate_dataframe, split_dataframe_by_column
+from utils.aggregator import interpolate_dataframe, split_dataframe_by_column
 
 
 class TestInterpolateDataframe:

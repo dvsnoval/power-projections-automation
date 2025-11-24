@@ -27,7 +27,7 @@ def run_command(cmd, description):
 def main():
     """Format all code."""
     project_root = Path(__file__).parent.parent
-    code_dir = project_root / "code"
+    code_dir = project_root / "utils"
     tests_dir = project_root / "tests"
     scripts_dir = project_root / "scripts"
 

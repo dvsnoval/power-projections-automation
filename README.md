@@ -151,7 +151,7 @@ pytest
 
 ```
 aggreg/
-├── code/
+├── utils/
 │   ├── __init__.py
 │   └── aggregator.py       # Main functions
 ├── tests/

@@ -27,7 +27,7 @@ def run_command(cmd, description):
 def main():
     """Run all quality checks."""
     project_root = Path(__file__).parent
-    code_dir = project_root / "code"
+    code_dir = project_root / "utils"
     tests_dir = project_root / "tests"
 
     checks = [
