@@ -80,3 +80,81 @@ def interpolate_dataframe(df, executive_metric, step):
         result_df[col] = interpolated_values
 
     return result_df
+
+
+def expand_dataframes_to_max(dataframes_dict, executive_metric, max_executive_value=None, step=None):
+    """
+    Expands each DataFrame in the dictionary to the maximum executive metric value using forward-fill.
+
+    Parameters:
+    dataframes_dict (dict): Dictionary of DataFrames (e.g., from split_dataframe_by_column + interpolate_dataframe)
+    executive_metric (str): Name of the executive metric column
+    max_executive_value (float, optional): Maximum executive metric value to expand to.
+        If None, uses the maximum value across all dataframes.
+    step (float, optional): Step size for extending the executive metric. If None, uses all unique values
+        from the input dataframes.
+
+    Returns:
+    dict: Dictionary with the same keys, but each DataFrame expanded to max executive metric
+        with forward-filled values
+    """
+    if not dataframes_dict:
+        raise ValueError("Input dictionary is empty")
+
+    # Find the maximum executive metric value across all dataframes if not provided
+    if max_executive_value is None:
+        max_executive_value = max(df[executive_metric].max() for df in dataframes_dict.values())
+
+    # Determine executive metric values based on step parameter
+    if step is not None:
+        # Find minimum value across all dataframes
+        min_executive_value = min(df[executive_metric].min() for df in dataframes_dict.values())
+
+        # Adjust min and max to be multiples of step
+        min_multiple = np.floor(min_executive_value / step) * step
+        max_multiple = np.ceil(max_executive_value / step) * step
+
+        # Create executive values with step stride
+        executive_values = list(np.arange(min_multiple, max_multiple + step, step))
+    else:
+        # Collect all unique executive metric values from all dataframes
+        all_executive_values = set()
+        for df in dataframes_dict.values():
+            all_executive_values.update(df[executive_metric].values)
+
+        # Sort and filter to only include values up to max
+        executive_values = sorted([v for v in all_executive_values if v <= max_executive_value])
+
+    # Expand each dataframe
+    expanded_dataframes = {}
+
+    for key, df in dataframes_dict.items():
+        # Sort dataframe by executive metric for correct forward-fill behavior
+        df_sorted = df.sort_values(by=executive_metric).reset_index(drop=True)
+
+        # Create new dataframe with all executive metric values
+        expanded_df = pd.DataFrame({executive_metric: executive_values})
+
+        # Get columns from original dataframe (excluding executive_metric)
+        other_columns = [col for col in df_sorted.columns if col != executive_metric]
+
+        # For each column, forward fill values
+        for col in other_columns:
+            col_values = []
+
+            for exec_val in executive_values:
+                # Get rows up to and including current executive value
+                mask = df_sorted[executive_metric] <= exec_val
+                if mask.any():
+                    # Forward fill: take the last available value (now correctly sorted)
+                    last_value = df_sorted.loc[mask, col].iloc[-1]
+                    col_values.append(last_value)
+                else:
+                    # If no data available yet, use NaN
+                    col_values.append(np.nan)
+
+            expanded_df[col] = col_values
+
+        expanded_dataframes[key] = expanded_df
+
+    return expanded_dataframes
