@@ -114,8 +114,9 @@ def expand_dataframes_to_max(dataframes_dict, executive_metric, max_executive_va
         min_multiple = np.floor(min_executive_value / step) * step
         max_multiple = np.ceil(max_executive_value / step) * step
 
-        # Create executive values with step stride
-        executive_values = list(np.arange(min_multiple, max_multiple + step, step))
+        # Create executive values with step stride using linspace for better floating-point precision
+        num_points = int(round((max_multiple - min_multiple) / step)) + 1
+        executive_values = np.linspace(min_multiple, max_multiple, num_points).tolist()
     else:
         # Collect all unique executive metric values from all dataframes
         all_executive_values = set()
